@@ -20,7 +20,6 @@ const ARCHIVO_CANCIONES = path.join (__dirname, "canciones.json");
 const ARCHIVO_NUEVAS = path.join(__dirname, "canciones-nuevas.json");
 
 //crear app express
-const express = require("express");
 const app = express();
 app.use(cors());
 app.use(express.json());
