@@ -50,7 +50,7 @@ function leerArchivo(ruta) {
 const PORT = process.env.PORT || 3000;
 
 app.get('/', (peticion, respuesta) => {
-    respuesta.sendFile(path.join(__dirname, '../frontend/index.html'));
+    respuesta.sendFile(path.join(__dirname, 'https://otgw-musiclibrary.vercel.app/'));
 });
 
 app.get('/api/canciones', (peticion, respuesta) => {
