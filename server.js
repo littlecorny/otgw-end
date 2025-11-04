@@ -47,7 +47,7 @@ function leerArchivo(ruta) {
 }
 
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.get('/', (peticion, respuesta) => {
     respuesta.sendFile(path.join(__dirname, '../frontend/index.html'));
