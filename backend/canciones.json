@@ -1,0 +1,19 @@
+[
+  {
+    "id": 1,
+    "titulo": "Prelude",
+    "artista": "The Blasting Company",
+    "link":"https://open.spotify.com/track/4rDDzbKwDldcYX66MB55DR?utm_source=generator",
+    "imagen": "http://localhost:3000/assets/portada.jpg"
+
+  },
+
+  {
+    "id": 2,
+    "titulo": "Into the Unknown",
+    "artista": "Jack Jones",
+    "link": "https://open.spotify.com/track/2v8U44KvrynuXjgMiIzzMM?utm_source=generator"
+    
+  }
+
+]
