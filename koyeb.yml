@@ -1,0 +1,8 @@
+name: otgw-end
+build:
+  working_dir: backend
+  type: nodejs
+  build_command: npm install
+run:
+  working_dir: backend
+  command: npm start
