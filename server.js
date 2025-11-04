@@ -1,90 +1,59 @@
+// --- Dependencias ---
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
 
+// --- Configuración de rutas y entorno ---
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname (__filename);
+const __dirname = path.dirname(__filename);
 
-const ARCHIVO_CANCIONES = path.join (__dirname, "canciones.json");
+// Archivos JSON locales
+const ARCHIVO_CANCIONES = path.join(__dirname, "canciones.json");
 const ARCHIVO_NUEVAS = path.join(__dirname, "canciones-nuevas.json");
 
-//crear app express
+// Crear app de Express
 const app = express();
-app.use(cors());
+
+// Middleware
+app.use(cors()); // permite peticiones desde tu frontend (Vercel)
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "../frontend")));
 
-
-////
-
-
-// LEER CANCIONES.JSON
-function leerCanciones () {
-    try {
-        const contenido = fs.readFileSync(ARCHIVO_CANCIONES, "utf-8");
-        const canciones = JSON.parse(contenido);
-        console.log(`Se leyeron ${canciones.length} canciones`);
-        return canciones;
-
-    }  catch (error) {
-        console.error("Error al leer el archivo de canciones:", error);
-        return [];  
-    }
-}
-
-// LEER NUEVAS-CANCIONES.JSON
-
+// --- Funciones auxiliares ---
 function leerArchivo(ruta) {
   try {
     const contenido = fs.readFileSync(ruta, "utf-8");
     return JSON.parse(contenido);
   } catch (error) {
-    console.error(`Error al leer ${ruta}:`, error);
+    console.error(`❌ Error al leer ${ruta}:`, error);
     return [];
   }
 }
 
-
-const PORT = process.env.PORT || 3000;
-
-app.get('/', (peticion, respuesta) => {
-    respuesta.sendFile(path.join(__dirname, 'https://otgw-musiclibrary.vercel.app/'));
+// --- Rutas API ---
+app.get('/api/canciones', (req, res) => {
+  const canciones = leerArchivo(ARCHIVO_CANCIONES);
+  res.json(canciones);
 });
 
-app.get('/api/canciones', (peticion, respuesta) => {
-    console.log('Solicitud: Dame todas las canciones');
-    const canciones = leerCanciones();
-    respuesta.json(canciones);
-});
-
-
-// Obtener canciones nuevas (para el dropdown o formulario)
 app.get('/api/nuevas', (req, res) => {
-  try {
-    const nuevas = leerArchivo(ARCHIVO_NUEVAS);
-    res.json(nuevas);
-  } catch (error) {
-    console.error("Error al leer canciones nuevas:", error);
-    res.status(500).json({ ok: false, error: "No se pudieron leer las canciones nuevas" });
-  }
+  const nuevas = leerArchivo(ARCHIVO_NUEVAS);
+  res.json(nuevas);
 });
 
-
-app.post('/api/nuevas', (peticion, respuesta) => {
+app.post('/api/nuevas', (req, res) => {
   try {
     const nuevas = leerArchivo(ARCHIVO_NUEVAS);
-    nuevas.push(peticion.body);
+    nuevas.push(req.body);
     fs.writeFileSync(ARCHIVO_NUEVAS, JSON.stringify(nuevas, null, 2));
-    respuesta.json({ ok: true });
+    res.json({ ok: true });
   } catch (error) {
-    console.error("Error al guardar canción:", error);
-    respuesta.status(500).json({ ok: false, error: "Error al guardar" });
+    console.error("❌ Error al guardar en canciones-nuevas.json:", error);
+    res.status(500).json({ ok: false, error: "Error al guardar" });
   }
 });
 
-// 🟢 NUEVO: guardar canción añadida permanentemente en canciones.json
 app.post('/api/canciones', (req, res) => {
   try {
     const canciones = leerArchivo(ARCHIVO_CANCIONES);
@@ -92,12 +61,14 @@ app.post('/api/canciones', (req, res) => {
     fs.writeFileSync(ARCHIVO_CANCIONES, JSON.stringify(canciones, null, 2));
     res.json({ ok: true });
   } catch (error) {
-    console.error("❌ Error al guardar la canción en canciones.json:", error);
-    res.status(500).json({ ok: false, error: "No se pudo guardar en canciones.json" });
+    console.error("❌ Error al guardar en canciones.json:", error);
+    res.status(500).json({ ok: false, error: "Error al guardar" });
   }
 });
 
+// --- Puerto ---
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log(`Servidor escuchando en http://localhost:${PORT}`);
- });
+  console.log(`✅ Servidor escuchando en puerto ${PORT}`);
+});
