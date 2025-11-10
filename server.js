@@ -45,4 +45,10 @@ app.get("/", (req, res) => {
 
 // puerto dinamico para koyeb
 const PORT = process.env.PORT || 3000;
+// ping para despertar el servidor
+app.get("/ping", (req, res) => {
+  console.log("Ping recibido ✅"); // se verá en los logs de Render
+  res.json({ status: "awake" });
+});
+
 app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`));
